@@ -18,7 +18,7 @@ jobs:
         run: npm install -g pnpm
 
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm install --config.strict-dep-builds=false
 
       - name: Setup Java
         uses: actions/setup-java@v4
