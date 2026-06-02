@@ -56,9 +56,21 @@ export function HeatmapCalendar({
 
   const isToday = (day: number) => getDateStr(day) === todayDate;
 
+  const firstTrackedDate = useMemo(() => {
+    const keys = Object.keys(records);
+    if (keys.length === 0) return null;
+    return keys.reduce((a, b) => (a < b ? a : b));
+  }, [records]);
+
+  const isBeforeTracking = (day: number) => {
+    if (!firstTrackedDate) return true;
+    return getDateStr(day) < firstTrackedDate;
+  };
+
   const getCellColor = (day: number | null): string => {
     if (!day) return "transparent";
     if (isFuture(day)) return colors.heatmapEmpty;
+    if (isBeforeTracking(day)) return colors.heatmapEmpty;
     const dateStr = getDateStr(day);
     const record = records[dateStr];
     if (!record) return colors.heatmap0;
@@ -112,9 +124,9 @@ export function HeatmapCalendar({
                     style={[
                       styles.dayNum,
                       {
-                        color: isFuture(day)
+                        color: isFuture(day) || isBeforeTracking(day)
                           ? colors.mutedForeground
-                          : day && countCompletedPrayers(records[getDateStr(day)] ?? { fajr: "none", dhuhr: "none", asr: "none", maghrib: "none", isha: "none", date: "" }) >= 3
+                          : countCompletedPrayers(records[getDateStr(day)] ?? { fajr: "none", dhuhr: "none", asr: "none", maghrib: "none", isha: "none", date: "" }) >= 3
                           ? "#1A2E1A"
                           : "#1A1A2E",
                         fontFamily: "Inter_500Medium",
