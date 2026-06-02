@@ -1,6 +1,6 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { AppState, AppStateStatus } from "react-native";
+import { AppState, AppStateStatus, Platform } from "react-native";
 
 export type PrayerState = "none" | "individual" | "jamaah";
 export type PrayerKey = "fajr" | "dhuhr" | "asr" | "maghrib" | "isha";
@@ -121,7 +121,24 @@ export function PrayerProvider({ children }: { children: React.ReactNode }) {
           [key]: state,
         },
       };
-      AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updated)).catch(() => {});
+      AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updated)).then(() => {
+        if (Platform.OS === "android") {
+          import("react-native-android-widget").then(({ requestWidgetUpdate }) => {
+            const prayers = PRAYER_KEYS.map(
+              (k) => updated[today]?.[k] ?? "none"
+            ) as import("../widgets/SalahWidget").WidgetPrayerState[];
+            requestWidgetUpdate({
+              widgetName: "SalahWidget",
+              renderWidget: () => {
+                const { SalahWidget } = require("../widgets/SalahWidget");
+                const React = require("react");
+                return React.createElement(SalahWidget, { prayers });
+              },
+              widgetNotFound: () => {},
+            }).catch(() => {});
+          }).catch(() => {});
+        }
+      }).catch(() => {});
       return updated;
     });
   }, []);

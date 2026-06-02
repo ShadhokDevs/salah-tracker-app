@@ -176,7 +176,7 @@ export default function TodayScreen() {
                 },
               ]}
             >
-              Jama\u2019ah
+              Jamaah
             </Text>
           </View>
           <View

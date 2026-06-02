@@ -52,7 +52,7 @@ function getStateInfo(
   if (state === "individual")
     return { label: "Individual", color: colors.prayerIndividual, isJamaah: false };
   if (state === "jamaah")
-    return { label: "Jama\u2019ah", color: colors.prayerJamaah, isJamaah: true };
+    return { label: "Jamaah", color: colors.prayerJamaah, isJamaah: true };
   return { label: "Missed", color: colors.mutedForeground, isJamaah: false };
 }
 

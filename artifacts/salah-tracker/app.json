@@ -28,7 +28,26 @@
         }
       ],
       "expo-font",
-      "expo-web-browser"
+      "expo-web-browser",
+      [
+        "react-native-android-widget",
+        {
+          "widgets": [
+            {
+              "name": "SalahWidget",
+              "label": "Salah Tracker",
+              "description": "Track your 5 daily prayers",
+              "minWidth": "250dp",
+              "minHeight": "100dp",
+              "targetCellWidth": 4,
+              "targetCellHeight": 1,
+              "updatePeriodMillis": 1800000,
+              "resizeMode": "horizontal",
+              "widgetCategory": "home_screen"
+            }
+          ]
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,

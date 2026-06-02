@@ -64,8 +64,8 @@ export function PrayerButton({
   const getSubtext = () => {
     if (isJummah) return "Congregational";
     if (state === "individual") return "Individual";
-    if (state === "jamaah") return "Jama\u2019ah";
-    return "Hold for Jama\u2019ah";
+    if (state === "jamaah") return "Jamaah";
+    return "Hold for Jamaah";
   };
 
   return (

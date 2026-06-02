@@ -168,9 +168,9 @@ export function AnalyticsCard({ year, month, allRecords }: AnalyticsCardProps) {
           value={`${Math.round(stats.rate)}%`}
         />
         <View style={[styles.divider, { backgroundColor: colors.border }]} />
-        <StatRow label="Total Jama'ah" value={String(stats.jamaah)} />
+        <StatRow label="Total Jamaah" value={String(stats.jamaah)} />
         <StatRow
-          label="Jama'ah Rate"
+          label="Jamaah Rate"
           value={`${Math.round(stats.jamaahRate)}%`}
         />
         <View style={[styles.divider, { backgroundColor: colors.border }]} />
