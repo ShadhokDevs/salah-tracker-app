@@ -27,7 +27,7 @@ jobs:
           java-version: '17'
 
       - name: Generate Android folder
-        run: npx expo prebuild --platform android
+        run: pnpm exec expo prebuild --platform android
 
       - name: Build APK (Debug)
         working-directory: android
