@@ -32,10 +32,10 @@ jobs:
           cd $EXPO_DIR
           npx expo prebuild --platform android --no-install
           cd android
-          ./gradlew assembleDebug
+          ./gradlew assembleRelease -Pandroid.injected.signing.store.file=$(pwd)/app/debug.keystore -Pandroid.injected.signing.store.password=android -Pandroid.injected.signing.key.alias=androiddebugkey -Pandroid.injected.signing.key.password=android
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: salah-tracker-apk
-          path: "**/android/app/build/outputs/apk/debug/app-debug.apk"
+          path: "**/android/app/build/outputs/apk/release/app-release.apk"
