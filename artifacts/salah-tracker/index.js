@@ -1,4 +1,4 @@
-import { Platform } from "react-native";
+const { Platform } = require("react-native");
 
 if (Platform.OS === "android") {
   const { registerWidgetTaskHandler } = require("react-native-android-widget");
@@ -6,4 +6,4 @@ if (Platform.OS === "android") {
   registerWidgetTaskHandler(widgetTaskHandler);
 }
 
-import "expo-router/entry";
+require("expo-router/entry");

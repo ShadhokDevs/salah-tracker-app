@@ -111,37 +111,44 @@ export function PrayerProvider({ children }: { children: React.ReactNode }) {
     return () => sub.remove();
   }, [loadRecords]);
 
-  const logPrayer = useCallback((key: PrayerKey, state: PrayerState) => {
-    const today = getLogicalDate();
-    setRecords((prev) => {
+  const logPrayer = useCallback(
+    (key: PrayerKey, state: PrayerState) => {
+      const today = getLogicalDate();
       const updated: Record<string, DayRecord> = {
-        ...prev,
+        ...records,
         [today]: {
-          ...(prev[today] ?? emptyRecord(today)),
+          ...(records[today] ?? emptyRecord(today)),
           [key]: state,
         },
       };
-      AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updated)).then(() => {
-        if (Platform.OS === "android") {
-          import("react-native-android-widget").then(({ requestWidgetUpdate }) => {
-            const prayers = PRAYER_KEYS.map(
-              (k) => updated[today]?.[k] ?? "none"
-            ) as import("../widgets/SalahWidget").WidgetPrayerState[];
+
+      setRecords(updated);
+
+      AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updated)).catch(() => {});
+
+      if (Platform.OS === "android") {
+        const prayers = PRAYER_KEYS.map(
+          (k) => (updated[today]?.[k] ?? "none") as "none" | "individual" | "jamaah"
+        );
+        import("react-native-android-widget")
+          .then(({ requestWidgetUpdate }) => {
             requestWidgetUpdate({
               widgetName: "SalahWidget",
               renderWidget: () => {
-                const { SalahWidget } = require("../widgets/SalahWidget");
-                const React = require("react");
+                // eslint-disable-next-line @typescript-eslint/no-var-requires
+                const { SalahWidget } = require("../widgets/SalahWidget") as {
+                  SalahWidget: React.ComponentType<{ prayers: ("none" | "individual" | "jamaah")[] }>;
+                };
                 return React.createElement(SalahWidget, { prayers });
               },
               widgetNotFound: () => {},
             }).catch(() => {});
-          }).catch(() => {});
-        }
-      }).catch(() => {});
-      return updated;
-    });
-  }, []);
+          })
+          .catch(() => {});
+      }
+    },
+    [records]
+  );
 
   const todayDate = getLogicalDate();
   const todayRecord = records[todayDate] ?? emptyRecord(todayDate);
