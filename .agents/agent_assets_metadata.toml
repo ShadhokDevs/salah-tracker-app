@@ -1,0 +1,8 @@
+uploads = []
+outputs = []
+
+[[generated]]
+id = "4RH7UfWgqklAiYOnfvNo3"
+uri = "file://artifacts/salah-tracker/assets/images/icon.png"
+type = "image"
+title = "salah tracker app icon"
