@@ -1,0 +1,124 @@
+Context & Goal
+Build a minimalist, Android-first Islamic habit-tracking application using Flutter and Hive for local storage. The application is called "Salah Tracker". Its core philosophy is ultra-low friction logging via an Android Home Screen Widget, helping users track their consistency for the five daily prayers.
+
+This is NOT a prayer times app. There are no GPS lookups, no Athan alarms, and no user accounts. It functions entirely offline as a visual habit accountability engine.
+
+1. Technology Stack & Packages
+Configure the Flutter project using the following dependencies:
+
+State Management: flutter_riverpod or provider (Choose the one most compatible with home screen widget sync)
+
+Local Storage: hive and hive_flutter (For lightning-fast key-value pairs)
+
+Widget Integration: home_widget (To bridge Flutter background code with native Android Widget providers)
+
+Icons: Standard lucide_icons or Material Icons.
+
+2. Core Business Logic & State Rules
+A. The 5 Daily Prayers
+The app tracks 5 prayer slots. However, on Fridays, the second slot dynamically alters its rules:
+
+Saturday through Thursday: Slots are Fajr, Dhuhr, Asr, Maghrib, Isha.
+
+Friday: Slots are Fajr, Jummah, Asr, Maghrib, Isha.
+
+B. Button Logging Interaction Matrix
+Each prayer slot in a database row holds one of three states: none (unlogged/missed), individual, or jamaah.
+
+Standard Slots (All non-Friday prayers, and Fajr/Asr/Maghrib/Isha on Fridays):
+
+Single Tap: Marks as individual. (UI updates to Green with a checkmark emoji ✓).
+
+Long Press: Marks as jamaah. (UI updates to Blue with a mosque emoji 🕌).
+
+Friday "Jummah" Slot (Replaces Dhuhr on Fridays):
+
+Single Tap OR Long Press: Instantly marks as jamaah. (Jummah is inherently congregational. UI updates to Blue with a mosque emoji 🕌).
+
+C. The Retrospective 3:00 AM Daily Reset Engine
+The app does not reset at midnight. It resets at 3:00 AM local time via an Android background worker (WorkManager via the home_widget package pipeline).
+
+The Logic: When the clock hits 3:00 AM on June 2, the app takes the current live widget states, saves them to the local database under the record key "2026-06-01" (Yesterday), and then wipes the live widget states back to none to start the new day (June 2).
+
+3. Screen Layouts & Design Language
+Design System (Theme: Modern, Peaceful Minimalist)
+Background: Off-white/Soft Cream (#F9F9FB) for light mode; Deep Slate/Charcoal (#121214) for dark mode.
+
+Neutral State: Soft Gray (#E2E8F0).
+
+Individual State: Emerald Green (#10B981) with white text.
+
+Jama'ah State: Indigo Blue (#3B82F6) with white text.
+
+Screen 1: The Main App Dashboard (Monthly Heatmap Calendar)
+Top Header: Displays the current Month & Year (e.g., "June 2026").
+
+"Monthly Recap" Button: Centered right under the month title. Tapping this toggles an analytics card (detailed below).
+
+The Heatmap Matrix: A standard monthly calendar grid view inspired by GitHub's contribution board. Each day is represented by a rounded square block color-coded by performance:
+
+0 prayers completed = Muted Light Red
+
+1–2 prayers completed = Soft Orange
+
+3 prayers completed = Soft Yellow
+
+4 prayers completed = Light Emerald Green
+
+5 prayers completed = Deep Emerald Green
+
+Interactive Day Sheet: Tapping any day block slides up a Bottom Sheet showing exactly what happened that day: e.g., Fajr: ✓ Individual, Jummah: 🕌 Jama'ah, Asr: Missed.
+
+Screen 2: Monthly Recap Analytics Component
+When opened, this panel computes and displays the following statistics using mathematical layout rows:
+
+Total Possible Prayers: (Days in current month)×5
+
+Total Completed Prayers: Count of all individual + jamaah entries.
+
+Total Missed Prayers: Total Possible−Total Completed.
+
+Prayer Completion Rate: (Total Completed÷Total Possible)×100%
+
+Total Jama'ah Prayers: Count of all standard long-presses + all logged Friday Jummah entries.
+
+Jama'ah Rate: (Total Jama’ah÷Total Completed)×100%
+
+Current/Best Streak: Number of consecutive days where completed prayers equals 5.
+
+Screen 3: Micro-copy / Motivational Engine
+Directly underneath the analytics metrics, display a card containing an empathetic, supportive message based on performance comparisons with the previous month:
+
+Condition A: First Month Ever:
+
+"Alhamdulillah. You completed [X]% of your prayers this month. Keep building consistency and strengthening your relationship with Allah. May Allah make you steadfast and increase you in goodness. Ameen."
+
+Condition B: Improved Performance (Current Month % > Previous Month %):
+
+"MashaAllah. You improved by [Delta]% compared to last month. Your consistency is growing, and every prayer matters. May Allah accept your efforts and make next month even better. InshaAllah."
+
+Condition C: Declined Performance (Current Month % < Previous Month %):
+
+"Alhamdulillah for every step taken toward Allah. Your completion rate decreased by [Delta]% compared to last month. This month may have been difficult, but every new day is another opportunity. Next month, we will come back stronger, InshaAllah. May Allah make consistency easy and accept every sincere effort."
+
+4. Native Android Home Screen Widget Specification
+This is the most critical feature. The user must be able to log directly from the home screen without opening the app container.
+
+Create a native Android Widget layout (using Glance or traditional XML layouts via Flutter's home_widget platform channels).
+
+The widget consists of 5 equal-sized horizontal or grid buttons.
+
+The widget reads its UI state directly from the shared memory managed by Hive.
+
+When a user clicks a button on the widget, it executes a background callback, changes the state in the local DB storage, updates the visual color scheme of that button immediately on the home screen, and updates the main application state.
+
+Implementation Instructions
+Initialize the Flutter app layout using an organized folder structure (/models, /providers, /views, /widgets).
+
+Set up Hive adapters to safely handle the custom local database schemas.
+
+Stub the native Android configurations required for the home_widget platform channels.
+
+Ensure the UI scales fluidly on mobile form factors and includes subtle micro-animations when changing prayer states.
+
+Please generate the complete source code files step-by-step. Let's start with the Hive database schema setup, the state management logic, and the core UI dashboard layout.
